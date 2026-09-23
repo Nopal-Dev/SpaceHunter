@@ -7,9 +7,15 @@
 //                                   phases: [{ unit: 'ms' | 'Advances', target: number }]
 //                                   console: consola del timer con el mismo framerate
 //                                { source: 'easy-lines', type: 'navigate', view: 'timer' }
+//                                { source: 'easy-lines', type: 'resize', height }
+//                                   alto del contenido, para que el iframe crezca y la página
+//                                   contenedora haga el scroll (Easy Lines no tiene scroll propio)
 //
 //   página → Easy Lines          { source: 'hunterspace', type: 'settings', settings: {...} }
 //                                { source: 'hunterspace', type: 'result', id, ok, message }
+//                                { source: 'hunterspace', type: 'viewport', top, height }
+//                                   posición del iframe respecto a la ventana y alto de la ventana
+//                                   (para mantener a la vista el panel de resultados)
 //
 // Sin página contenedora (abierto directamente), Easy Lines funciona solo y no envía nada.
 
@@ -18,6 +24,7 @@ export const embedded = window.parent !== window;
 const REQUEST_TIMEOUT = 3000;
 const pending = new Map();
 const settingsListeners = new Set();
+const viewportListeners = new Set();
 let nextId = 1;
 
 window.addEventListener('message', (e) => {
@@ -27,6 +34,8 @@ window.addEventListener('message', (e) => {
   if (!msg || msg.source !== 'hunterspace') return;
   if (msg.type === 'settings') {
     settingsListeners.forEach((fn) => fn(msg.settings ?? {}));
+  } else if (msg.type === 'viewport') {
+    viewportListeners.forEach((fn) => fn({ top: Number(msg.top) || 0, height: Number(msg.height) || innerHeight }));
   } else if (msg.type === 'result' && pending.has(msg.id)) {
     pending.get(msg.id)(msg);
     pending.delete(msg.id);
@@ -62,4 +71,9 @@ export function request(type, data = {}) {
 /** fn(settings) se llama cada vez que la página contenedora envía sus ajustes de aspecto. */
 export function onSettings(fn) {
   settingsListeners.add(fn);
+}
+
+/** fn({ top, height }) se llama cuando la página contenedora hace scroll o cambia de tamaño. */
+export function onViewport(fn) {
+  viewportListeners.add(fn);
 }

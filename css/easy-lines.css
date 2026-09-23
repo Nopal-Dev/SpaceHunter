@@ -555,7 +555,7 @@ select option:checked {
 
 .tl-table-wrap {
   overflow: auto;
-  max-height: 70vh;
+  max-height: calc(var(--view-h, 100vh) * 0.7);
   border-radius: 10px;
   border: 1px solid var(--line);
 }
@@ -658,7 +658,7 @@ body.tl-side-by-side .tl-results {
 }
 
 body.tl-side-by-side .tl-table-wrap {
-  max-height: calc(100vh - 150px);
+  max-height: calc(var(--view-h, 100vh) - 150px);
 }
 
 @media (max-width: 1100px) {
@@ -791,4 +791,17 @@ body.embedded .el-header {
   .easy-lines-view {
     padding: 12px 16px 16px;
   }
+}
+
+/* Dentro de un iframe: el alto lo marca el contenido (el iframe crece y la página contenedora
+   hace el scroll). El panel de resultados se mantiene a la vista desde js/main.js. */
+html:has(body.embedded),
+body.embedded {
+  min-height: 0;
+}
+
+body.embedded.tl-side-by-side .tl-results {
+  position: relative;
+  top: 0;
+  will-change: transform;
 }

@@ -2,7 +2,7 @@
 // Abierto directamente usa un aspecto por defecto; dentro de HunterSpace (iframe) usa el que
 // le envía la página contenedora.
 import { translatePage } from './i18n.js';
-import { embedded, send, onSettings } from './host.js';
+import { embedded, send, onSettings, onViewport } from './host.js';
 import { createCalibration } from './calibration.js';
 
 const DEFAULT_APPEARANCE = {
@@ -46,6 +46,42 @@ applyAppearance();
 translatePage();
 createCalibration(document.getElementById('tl-calibration'));
 
-// Dentro de HunterSpace: recibir su aspecto y avisar de que Easy Lines está listo
-onSettings(applyAppearance);
-send('ready');
+// ─── Dentro de una página contenedora (iframe) ───
+// Easy Lines no tiene scroll propio: avisa de su alto para que el iframe crezca y la página
+// contenedora haga el scroll. Como position: sticky no funciona así, el panel de resultados
+// (con formulario y resultados lado a lado) se mantiene a la vista moviéndolo a mano.
+if (embedded) {
+  const STICKY_TOP = 16;
+  let viewport = { top: 0, height: screen.availHeight };
+  // Hasta que la página contenedora envíe el alto real de su ventana, usar el de la pantalla
+  // (100vh aquí sería el propio iframe, que crece con el contenido: crecería sin fin).
+  document.documentElement.style.setProperty('--view-h', `${screen.availHeight}px`);
+
+  const reportHeight = () => send('resize', { height: document.body.offsetHeight });
+  new ResizeObserver(reportHeight).observe(document.body);
+
+  const keepResultsInView = () => {
+    const card = document.querySelector('.tl-results');
+    if (!card) return;
+    card.style.transform = '';
+    const sideBySide = document.body.classList.contains('tl-side-by-side') && innerWidth > 1100;
+    if (!sideBySide) return;
+    const cardTop = card.getBoundingClientRect().top + scrollY;
+    const containerBottom = card.parentElement.getBoundingClientRect().bottom + scrollY;
+    const maxShift = containerBottom - (cardTop + card.offsetHeight);
+    const shift = Math.min(Math.max(STICKY_TOP - (viewport.top + cardTop), 0), Math.max(maxShift, 0));
+    if (shift > 0) card.style.transform = `translateY(${shift}px)`;
+  };
+
+  onViewport((v) => {
+    viewport = v;
+    // Alto de la ventana de la página contenedora (para las listas con scroll propio)
+    document.documentElement.style.setProperty('--view-h', `${v.height}px`);
+    keepResultsInView();
+  });
+  new ResizeObserver(keepResultsInView).observe(document.body);
+
+  onSettings(applyAppearance);
+  send('ready');
+  reportHeight();
+}
