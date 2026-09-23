@@ -1,7 +1,7 @@
 # Easy Lines
 
 Calibration tool for **Gen 3 Pokémon RNG** (Ruby/Sapphire/Emerald painting seeds and
-FireRed/LeafGreen initial seeds), in English, Spanish and Japanese.
+FireRed/LeafGreen initial seeds), in English and Spanish.
 
 It is the Easy Lines section of **HunterSpace**, published as a standalone program. It is powered by the
 engine of [Ten Lines](https://github.com/Lincoln-LM/ten-lines) (Lincoln-LM), built on
@@ -16,7 +16,7 @@ HunterSpace, publicada como programa independiente. Usa el motor de Ten Lines / 
   target seed ± range, advances, offset, TeachyTV mode, TID/SID, static and wild encounters, shiny / nature / gender
   filters and IV calculator.
 - Sort results by seed or by Continue-screen frames.
-- Interface and Pokémon names in **English, Spanish and Japanese** (`?lang=en|es|ja`, otherwise the browser language).
+- Interface and Pokémon names in **English and Spanish** (`?lang=en|es`, otherwise the browser language).
 - Settings are remembered in the browser.
 - Inside HunterSpace, clicking a result sets up the timer automatically (see *Embedding* below).
 
