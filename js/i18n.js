@@ -105,10 +105,16 @@ const DICT = {
   'tl.resultsMany': ['más de {n} resultados', 'more than {n} results'],
   'tl.resultsIdle': ['Configura la búsqueda y pulsa Buscar.', 'Set up the search and press Search.'],
   'tl.noResults': ['Sin resultados con estos filtros.', 'No results with these filters.'],
-  'tl.clickRow': ['Haz clic en una fila para configurar el timer.', 'Click a row to set up the timer.'],
+  'tl.clickRow': [
+    'Pulsa el botón Timer de una fila para configurar el timer con esa seed.',
+    'Press the Timer button on a row to set up the timer with that seed.',
+  ],
+  'tl.useBtn': ['Timer', 'Timer'],
+  'tl.copy': ['Clic para copiar', 'Click to copy'],
+  'tl.copied': ['¡Copiado!', 'Copied!'],
   'tl.clickRow.title': [
-    'Clic para configurar el timer con esta seed',
-    'Click to set up the timer with this seed',
+    'Configurar el timer con esta seed',
+    'Set up the timer with this seed',
   ],
   'tl.timerSet': [
     'Timer configurado (Custom): fase 1 = {ms} ms · fase 2 = {f} frames en Continue',

@@ -170,6 +170,64 @@ function dynSelect({ label, get, set, visible, tooltip, numeric = true }) {
   };
 }
 
+/** Copia un texto al portapapeles (con respaldo para navegadores sin la API moderna). */
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    return true;
+  } catch {
+    const area = document.createElement('textarea');
+    area.value = text;
+    area.style.cssText = 'position:fixed;opacity:0;pointer-events:none';
+    document.body.append(area);
+    area.select();
+    const ok = document.execCommand('copy');
+    area.remove();
+    return ok;
+  }
+}
+
+/** Número que se copia al portapapeles al pulsarlo, con un breve "¡Copiado!". */
+function copyable(value) {
+  const button = h(
+    'button',
+    {
+      type: 'button',
+      class: 'tl-copy',
+      title: t('tl.copy'),
+      onclick: async () => {
+        if (!(await copyText(String(value)))) return;
+        button.classList.remove('copied');
+        void button.offsetWidth; // reiniciar la animación
+        button.classList.add('copied');
+        clearTimeout(button._timer);
+        button._timer = setTimeout(() => button.classList.remove('copied'), 1200);
+      },
+    },
+    String(value),
+  );
+  button.dataset.copied = t('tl.copied');
+  return button;
+}
+
+/** Icono de cronómetro para el botón que envía la seed al timer. */
+function timerIcon() {
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  for (const [k, v] of Object.entries({ viewBox: '0 0 24 24', width: '15', height: '15', fill: 'none', stroke: 'currentColor', 'stroke-width': '2.2', 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'aria-hidden': 'true' })) {
+    svg.setAttribute(k, v);
+  }
+  for (const d of ['M12 9v4l2.5 2.5', 'M9.5 2h5', 'M12 2v3']) {
+    const path = document.createElementNS(NS, 'path');
+    path.setAttribute('d', d);
+    svg.append(path);
+  }
+  const circle = document.createElementNS(NS, 'circle');
+  for (const [k, v] of Object.entries({ cx: '12', cy: '13', r: '8' })) circle.setAttribute(k, v);
+  svg.append(circle);
+  return svg;
+}
+
 /** Icono de mano señalando, para el aviso de "haz clic en una fila". */
 function pointerIcon() {
   const NS = 'http://www.w3.org/2000/svg';
@@ -1097,7 +1155,15 @@ export function createCalibration(root) {
       t('col.power'),
       t('col.gender'),
     ].filter(Boolean);
-    resultsHead.replaceChildren(h('tr', {}, ...cols.map((c) => h('th', {}, c))));
+    resultsHead.replaceChildren(
+      h(
+        'tr',
+        {},
+        // Columna del botón "Timer" (solo dentro de HunterSpace)
+        embedded ? h('th', { class: 'tl-use-cell', 'aria-label': t('tl.clickRow.title') }) : null,
+        ...cols.map((c) => h('th', {}, c)),
+      ),
+    );
 
     const targetMS = frameToMS(s.target.seedTime / 16, s.gameConsole);
     const sorter = SORTERS[state.sort];
@@ -1110,7 +1176,8 @@ export function createCalibration(root) {
         h(
           'td',
           { class: row.initialSeed === s.target.initialSeed ? 'tl-target' : '' },
-          h('span', { class: 'mono' }, `${hexSeed(row.initialSeed, 16)} | ${seedMS}`),
+          h('span', { class: 'mono' }, `${hexSeed(row.initialSeed, 16)} | `),
+          copyable(seedMS),
           ' ms ',
           h('span', { class: 'muted' }, `(${diff >= 0 ? '+' : ''}${diff} ms)`),
         ),
@@ -1118,7 +1185,7 @@ export function createCalibration(root) {
         s.isMultiMethod && h('td', {}, METHODS[row.method]),
         s.isTeachyTV && h('td', {}, row.advances - row.ttvAdvances * 313 + row.ttvAdvances),
         s.isTeachyTV && h('td', {}, row.ttvAdvances),
-        s.isSwitch && h('td', {}, continueFrames(row, s)),
+        s.isSwitch && h('td', {}, copyable(continueFrames(row, s))),
         !s.isStatic && h('td', {}, `${row.encounterSlot}: ${res.getName(row.species, row.form)}`),
         !s.isStatic && h('td', {}, row.level),
         h('td', { class: 'mono' }, hexSeed(row.pid, 32)),
@@ -1130,18 +1197,31 @@ export function createCalibration(root) {
         h('td', {}, row.hiddenPowerStrength),
         h('td', {}, GENDERS[row.gender]),
       ].filter(Boolean);
-      return h(
-        'tr',
-        {
-          class: row === selectedRow ? 'tl-selected' : '',
-          title: embedded ? t('tl.clickRow.title') : undefined,
-          onclick: embedded ? (e) => sendToTimer(row, seedMS, e.currentTarget) : undefined,
-        },
-        ...cells,
-      );
+      const tr = h('tr', { class: row === selectedRow ? 'tl-selected' : '' }, ...cells);
+      if (embedded) {
+        tr.prepend(
+          h(
+            'td',
+            { class: 'tl-use-cell' },
+            h(
+              'button',
+              {
+                type: 'button',
+                class: 'tl-use-btn',
+                title: t('tl.clickRow.title'),
+                'aria-label': `${t('tl.clickRow.title')}: ${hexSeed(row.initialSeed, 16)}`,
+                onclick: () => sendToTimer(row, seedMS, tr),
+              },
+              timerIcon(),
+              h('span', {}, t('tl.useBtn')),
+            ),
+          ),
+        );
+      }
+      return tr;
     });
     if (rows.length > MAX_ROWS) {
-      body.push(h('tr', {}, h('td', { colspan: cols.length, class: 'muted' }, '…')));
+      body.push(h('tr', {}, h('td', { colspan: cols.length + (embedded ? 1 : 0), class: 'muted' }, '…')));
     }
     resultsBody.replaceChildren(...body);
     resultsHint.hidden = rows.length === 0;
