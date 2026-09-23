@@ -1,0 +1,794 @@
+/* Easy Lines — estilos.
+   Las variables de aspecto (--accent, --panel-alpha, --radius, tema…) las ajusta js/main.js,
+   ya sea con los valores por defecto o con los que envía HunterSpace. */
+
+/* ─── Tokens ─── */
+:root {
+  --accent: #8b5cf6;
+  --accent-rgb: 139, 92, 246;
+  --on-accent: #fff;
+  --timer-font: 'JetBrains Mono', ui-monospace, Consolas, monospace;
+  --timer-scale: 1;
+  --panel-alpha: 0.78;
+  --panel-blur: 14px;
+  --radius: 16px;
+  --ui-font: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+  --success: #22c55e;
+  --warn: #f59e0b;
+  --danger: #ef4444;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0b1020;
+  --panel-rgb: 17, 22, 38;
+  --field: rgba(255, 255, 255, 0.06);
+  --field-border: rgba(255, 255, 255, 0.1);
+  --text: #e8eaf2;
+  --muted: #9aa3b8;
+  --line: rgba(255, 255, 255, 0.08);
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.45);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #eef1f7;
+  --panel-rgb: 255, 255, 255;
+  --field: rgba(15, 23, 42, 0.05);
+  --field-border: rgba(15, 23, 42, 0.12);
+  --text: #141824;
+  --muted: #5d6679;
+  --line: rgba(15, 23, 42, 0.08);
+  --shadow: 0 10px 30px rgba(15, 23, 42, 0.12);
+}
+
+/* ─── Base ─── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+}
+
+body {
+  font-family: var(--ui-font);
+  color: var(--text);
+  background: var(--bg);
+  font-size: 15px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+a {
+  color: var(--accent);
+}
+
+kbd {
+  font-family: var(--ui-font);
+  font-size: 0.75em;
+  padding: 1px 6px;
+  border-radius: 5px;
+  border: 1px solid var(--field-border);
+  background: var(--field);
+}
+
+.card {
+  background: rgba(var(--panel-rgb), var(--panel-alpha));
+  backdrop-filter: blur(var(--panel-blur));
+  -webkit-backdrop-filter: blur(var(--panel-blur));
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
+
+.tabs {
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  margin: 8px 0 16px;
+  border-radius: 12px;
+  background: var(--field);
+}
+
+.tab {
+  flex: 1;
+  border: 0;
+  padding: 9px 10px;
+  border-radius: 9px;
+  background: transparent;
+  color: var(--muted);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.tab:hover:not(:disabled) {
+  color: var(--text);
+}
+
+.tab.active {
+  background: var(--accent);
+  color: var(--on-accent);
+  box-shadow: 0 2px 10px rgba(var(--accent-rgb), 0.35);
+}
+
+.tab:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.tabs.small .tab {
+  padding: 7px 8px;
+  font-size: 14px;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 12px 14px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  min-width: 0;
+}
+
+.field-label {
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--muted);
+  display: flex;
+  justify-content: space-between;
+}
+
+.field input[type='text'],
+.field input[type='url'],
+.field select {
+  width: 100%;
+  font: inherit;
+  color: var(--text);
+  background: var(--field);
+  border: 1px solid var(--field-border);
+  border-radius: 10px;
+  padding: 9px 11px;
+  min-height: 40px;
+}
+
+.field input[type='text'] {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Opciones de todos los selects: fondo sólido del tema. El fondo del select es
+   semitransparente y Chrome en Windows dibuja la lista sobre blanco, dejando el
+   texto claro ilegible. */
+select option,
+select optgroup {
+  background-color: rgb(var(--panel-rgb));
+  color: var(--text);
+}
+
+select option:checked {
+  background-color: var(--accent);
+  color: var(--on-accent);
+}
+
+.field input:focus,
+.field select:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.25);
+}
+
+.field input.invalid {
+  border-color: var(--danger);
+  box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2);
+}
+
+.field input:disabled,
+.field select:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.field input[type='color'] {
+  width: 100%;
+  height: 40px;
+  padding: 3px;
+  border-radius: 10px;
+  border: 1px solid var(--field-border);
+  background: var(--field);
+  cursor: pointer;
+}
+
+.field-range input[type='range'] {
+  width: 100%;
+  accent-color: var(--accent);
+}
+
+/* Switch */
+.field-check {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.switch {
+  position: relative;
+  width: 42px;
+  height: 24px;
+  flex-shrink: 0;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.switch-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  background: var(--field-border);
+  transition: background 0.15s;
+  pointer-events: none;
+}
+
+.switch-track::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.15s;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+.switch input:checked + .switch-track {
+  background: var(--accent);
+}
+
+.switch input:checked + .switch-track::after {
+  transform: translateX(18px);
+}
+
+.switch input:focus-visible + .switch-track {
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.35);
+}
+
+/* ─── Buttons ─── */
+.btn {
+  font: inherit;
+  font-weight: 600;
+  border-radius: 10px;
+  padding: 9px 16px;
+  min-height: 40px;
+  border: 1px solid var(--field-border);
+  background: var(--field);
+  color: var(--text);
+  cursor: pointer;
+  transition: filter 0.15s, transform 0.1s, background 0.15s;
+  white-space: nowrap;
+}
+
+.btn:hover:not(:disabled) {
+  filter: brightness(1.12);
+}
+
+.btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.btn:focus-visible,
+.tab:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: transparent;
+  color: var(--on-accent);
+}
+
+.btn-success {
+  background: rgba(34, 197, 94, 0.15);
+  border-color: rgba(34, 197, 94, 0.4);
+  color: var(--success);
+}
+
+.btn-ghost {
+  background: transparent;
+}
+
+.btn-danger {
+  color: var(--danger);
+}
+
+.btn-block {
+  width: 100%;
+  grid-column: 1 / -1;
+}
+
+.btn-sm {
+  min-height: 32px;
+  padding: 5px 10px;
+  font-size: 13px;
+}
+
+.btn.danger {
+  color: var(--danger);
+}
+
+.btn-icon {
+  padding: 0;
+  width: 40px;
+  flex-shrink: 0;
+}
+
+.empty {
+  color: var(--muted);
+  font-size: 13.5px;
+  text-align: center;
+  padding: 14px 8px;
+  margin: 0;
+}
+
+.hint {
+  margin: 0;
+  font-size: 12.5px;
+  color: var(--muted);
+}
+
+@media (max-width: 600px) {
+  .field-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
+}
+
+/* ─── Easy Lines: Calibration (Ten Lines) ─── */
+.tl-tabs {
+  margin: 0 0 16px;
+  background: rgba(var(--panel-rgb), var(--panel-alpha));
+  backdrop-filter: blur(var(--panel-blur));
+  -webkit-backdrop-filter: blur(var(--panel-blur));
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow);
+}
+
+.tl-calibration {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tl-form {
+  padding: 8px 20px 20px;
+}
+
+.tl-section {
+  margin: 0;
+  padding: 14px 0 16px;
+  border: 0;
+  border-bottom: 1px dashed var(--line);
+  min-width: 0;
+}
+
+.tl-section legend {
+  float: left;
+  width: 100%;
+  padding: 0;
+  margin-bottom: 10px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+}
+
+.tl-section .field-grid {
+  clear: both;
+}
+
+.field-wide {
+  grid-column: 1 / -1;
+}
+
+.tl-form .field-check {
+  align-self: end;
+  min-height: 40px;
+}
+
+.field-help {
+  font-size: 12px;
+  color: var(--muted);
+  min-height: 16px;
+}
+
+.field-help.error,
+.tl-error {
+  color: var(--danger);
+}
+
+.mono-input {
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+}
+
+.field textarea {
+  width: 100%;
+  font: inherit;
+  font-family: 'JetBrains Mono', ui-monospace, monospace;
+  color: var(--text);
+  background: var(--field);
+  border: 1px solid var(--field-border);
+  border-radius: 10px;
+  padding: 9px 11px;
+  resize: vertical;
+}
+
+.field textarea:focus,
+.field input[list]:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(var(--accent-rgb), 0.25);
+}
+
+.field textarea.invalid {
+  border-color: var(--danger);
+}
+
+.tl-seed-details summary {
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.tl-seed-range {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.tl-seed-range span {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 12px;
+  padding: 3px 7px;
+  border-radius: 6px;
+  background: var(--field);
+}
+
+.tl-seed-range span.target {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+.tl-ivs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px 14px;
+}
+
+.tl-ivs > .field-wide {
+  grid-column: 1 / -1;
+}
+
+.tl-iv-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 40px;
+  gap: 8px;
+  align-items: end;
+}
+
+.tl-error {
+  margin: 14px 0 0;
+  font-size: 13.5px;
+}
+
+.tl-submit {
+  margin-top: 16px;
+}
+
+.tl-status {
+  display: block;
+  margin-top: 8px;
+  font-size: 13px;
+  color: var(--muted);
+  min-height: 18px;
+}
+
+.tl-results {
+  padding: 16px 16px 12px;
+  min-width: 0;
+}
+
+.tl-results-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.tl-results-head h2 {
+  margin: 0;
+  font-size: 17px;
+}
+
+.tl-table-wrap {
+  overflow: auto;
+  max-height: 70vh;
+  border-radius: 10px;
+  border: 1px solid var(--line);
+}
+
+.tl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.tl-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  text-align: left;
+  font-size: 11.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+  background: rgb(var(--panel-rgb));
+  padding: 9px 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.tl-table td {
+  padding: 7px 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.tl-table tbody tr:hover {
+  background: var(--field);
+}
+
+.tl-table .mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.tl-table .muted {
+  color: var(--muted);
+}
+
+.tl-table td.tl-target {
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.tl-table td.tl-shiny {
+  color: #facc15;
+  font-weight: 700;
+}
+
+.tl-results .empty:empty {
+  display: none;
+}
+
+.tl-credits {
+  margin: 16px 0 0;
+  font-size: 12px;
+  color: var(--muted);
+  text-align: center;
+}
+
+:root[data-theme='dark'] .tl-credits {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+@media (max-width: 600px) {
+  .tl-form {
+    padding: 4px 14px 16px;
+  }
+
+  .tl-iv-row {
+    grid-template-columns: 1fr 1fr 40px;
+  }
+}
+
+.tl-form .field-grid {
+  grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+}
+
+.tl-form .field:has(input[list]) {
+  max-width: 480px;
+}
+
+/* ─── Easy Lines: formulario (izquierda) y resultados (derecha) en una fila ─── */
+body.tl-side-by-side .easy-lines-view {
+  max-width: 1700px;
+}
+
+body.tl-side-by-side .tl-calibration {
+  display: grid;
+  grid-template-columns: minmax(0, 520px) minmax(0, 1fr);
+  align-items: start;
+}
+
+body.tl-side-by-side .tl-results {
+  position: sticky;
+  top: 16px;
+}
+
+body.tl-side-by-side .tl-table-wrap {
+  max-height: calc(100vh - 150px);
+}
+
+@media (max-width: 1100px) {
+  body.tl-side-by-side .tl-calibration {
+    display: flex;
+  }
+
+  body.tl-side-by-side .tl-results {
+    position: static;
+  }
+}
+
+/* Filas clicables de resultados → timer */
+.tl-table tbody tr[title] {
+  cursor: pointer;
+}
+
+.tl-table tbody tr.tl-selected {
+  background: rgba(var(--accent-rgb), 0.18);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.tl-hint {
+  margin: -4px 0 10px;
+}
+
+.tl-notice {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 13.5px;
+  background: rgba(34, 197, 94, 0.14);
+  border: 1px solid rgba(34, 197, 94, 0.35);
+}
+
+.tl-notice.error {
+  background: rgba(239, 68, 68, 0.14);
+  border-color: rgba(239, 68, 68, 0.35);
+}
+
+.tl-notice .btn {
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Selector de orden de resultados */
+.tl-results-head .tl-sort {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--muted);
+}
+
+.tl-results-head {
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.req {
+  color: var(--danger);
+}
+
+/* ─── Propio de Easy Lines ─── */
+body {
+  display: block;
+  min-height: 100vh;
+  background: var(--bg);
+}
+
+/* Dentro de HunterSpace el fondo lo dibuja la página contenedora */
+body.embedded {
+  background: transparent;
+}
+
+body:not(.embedded) {
+  background:
+    radial-gradient(1200px 800px at 10% 10%, rgba(var(--accent-rgb), 0.25) 0%, transparent 60%),
+    var(--bg);
+  background-attachment: fixed;
+}
+
+.easy-lines-view {
+  width: 100%;
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 16px 20px 20px;
+}
+
+body.embedded .easy-lines-view {
+  padding-top: 0;
+}
+
+.el-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 4px 0 14px;
+}
+
+.el-header h1 {
+  margin: 0;
+  font-size: 20px;
+}
+
+body.embedded .el-header {
+  display: none;
+}
+
+.scope {
+  width: auto;
+  min-height: 32px;
+  padding: 4px 8px;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+  background: var(--field);
+  border: 1px solid var(--field-border);
+  border-radius: 10px;
+}
+
+@media (max-width: 600px) {
+  .easy-lines-view {
+    padding: 12px 16px 16px;
+  }
+}

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>Easy Lines</title>
+    <meta name="description" content="Gen 3 Pokémon RNG calibration tool powered by Ten Lines / PokeFinder." />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    />
+    <link rel="stylesheet" href="css/easy-lines.css" />
+  </head>
+  <body>
+    <main class="easy-lines-view">
+      <header class="el-header">
+        <h1 data-i18n="view.easyLines">Easy Lines</h1>
+      </header>
+      <nav class="tabs tl-tabs" aria-label="Easy Lines tools" data-i18n-aria="tl.tools">
+        <button type="button" class="tab active" aria-current="page">Calibration</button>
+        <button type="button" class="tab" disabled title="Coming soon" data-i18n-title="soon">Searcher</button>
+        <button type="button" class="tab" disabled title="Coming soon" data-i18n-title="soon">Initial Seed</button>
+      </nav>
+      <div id="tl-calibration" class="tl-calibration"></div>
+      <p class="tl-credits" data-i18n-html="tl.credits"></p>
+    </main>
+    <script type="module" src="js/main.js"></script>
+  </body>
+</html>

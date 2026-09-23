@@ -1,0 +1,4 @@
+# Datos binarios (listas de seeds) y motor compilado
+*.bin binary
+engine/engine.js -diff linguist-generated
+js/vendor/** linguist-vendored
