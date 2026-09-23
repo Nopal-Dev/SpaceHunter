@@ -664,6 +664,8 @@ body.tl-side-by-side .tl-table-wrap {
 @media (max-width: 1100px) {
   body.tl-side-by-side .tl-calibration {
     display: flex;
+    /* Apilado: cada panel ocupa todo el ancho (con start, la tabla se saldría del recuadro) */
+    align-items: stretch;
   }
 
   body.tl-side-by-side .tl-results {
@@ -682,7 +684,51 @@ body.tl-side-by-side .tl-table-wrap {
 }
 
 .tl-hint {
-  margin: -4px 0 10px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 12px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--muted);
+  background: var(--field);
+  border: 1px dashed var(--field-border);
+}
+
+.tl-hint svg {
+  flex-shrink: 0;
+}
+
+/* Dentro de HunterSpace: aviso destacado con el color de acento */
+.tl-hint-action {
+  font-weight: 700;
+  color: var(--text);
+  background: rgba(var(--accent-rgb), 0.16);
+  border: 1px solid rgba(var(--accent-rgb), 0.55);
+}
+
+.tl-hint-action svg {
+  color: var(--accent);
+  animation: tl-point 1.6s ease-in-out infinite;
+}
+
+/* La mano "toca" suavemente para llamar la atención */
+@keyframes tl-point {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(3px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tl-hint-action svg {
+    animation: none;
+  }
 }
 
 .tl-notice {

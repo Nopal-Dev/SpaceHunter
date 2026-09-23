@@ -170,6 +170,27 @@ function dynSelect({ label, get, set, visible, tooltip, numeric = true }) {
   };
 }
 
+/** Icono de mano señalando, para el aviso de "haz clic en una fila". */
+function pointerIcon() {
+  const NS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 24 24');
+  svg.setAttribute('width', '20');
+  svg.setAttribute('height', '20');
+  svg.setAttribute('fill', 'none');
+  svg.setAttribute('stroke', 'currentColor');
+  svg.setAttribute('stroke-width', '2');
+  svg.setAttribute('stroke-linecap', 'round');
+  svg.setAttribute('stroke-linejoin', 'round');
+  svg.setAttribute('aria-hidden', 'true');
+  for (const d of ['M9 11V5.5a1.5 1.5 0 0 1 3 0V10', 'M12 9.5a1.5 1.5 0 0 1 3 0V11', 'M15 10.5a1.5 1.5 0 0 1 3 0V15a6 6 0 0 1-6 6h-1a6 6 0 0 1-4.9-2.6L4.3 15a1.5 1.5 0 0 1 2.4-1.8L9 15.5']) {
+    const path = document.createElementNS(NS, 'path');
+    path.setAttribute('d', d);
+    svg.append(path);
+  }
+  return svg;
+}
+
 function section(title, ...children) {
   return h('fieldset', { class: 'tl-section' }, h('legend', {}, title), h('div', { class: 'field-grid' }, ...children));
 }
@@ -572,7 +593,13 @@ export function createCalibration(root) {
   const resultsCount = h('span', { class: 'muted' });
   const resultsEmpty = h('p', { class: 'empty' }, t('tl.resultsIdle'));
   const timerNotice = h('div', { class: 'tl-notice', hidden: true });
-  const resultsHint = h('p', { class: 'hint tl-hint', hidden: true }, embedded ? t('tl.clickRow') : t('tl.standalone'));
+  // Aviso destacado: dentro de HunterSpace, que cada fila se puede usar para configurar el timer
+  const resultsHint = h(
+    'p',
+    { class: `tl-hint${embedded ? ' tl-hint-action' : ''}`, hidden: true, role: 'note' },
+    pointerIcon(),
+    h('span', {}, embedded ? t('tl.clickRow') : t('tl.standalone')),
+  );
   let selectedRow = null;
   const sortSelect = h(
     'select',
