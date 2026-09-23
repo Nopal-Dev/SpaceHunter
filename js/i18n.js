@@ -24,6 +24,8 @@ const DICT = {
     'Easy Lines',
     'Easy Lines',
   ],
+  'search.placeholder': ['Buscar…', 'Search…', '検索…'],
+  'search.none': ['Sin coincidencias', 'No matches', '一致するものがありません'],
   any: [
     'Cualquiera',
     'Any',

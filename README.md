@@ -49,13 +49,15 @@ Easy Lines can run inside an `<iframe>` and talk to the host page with `postMess
 | Direction | Message |
 |---|---|
 | Easy Lines → host | `{ source: 'easy-lines', type: 'ready' }` |
-| Easy Lines → host | `{ source: 'easy-lines', type: 'set-timer', id, phases: [{ unit: 'ms' \| 'Advances', target }], console }` |
+| Easy Lines → host | `{ source: 'easy-lines', type: 'set-timer', id, phases: [{ unit: 'ms' \| 'Advances', target }], console, target: { subtitle, fields: [{ key, label, value }] } }` |
+| Easy Lines → host | `{ source: 'easy-lines', type: 'resize', height }` (content height; the host page scrolls) |
 | Easy Lines → host | `{ source: 'easy-lines', type: 'navigate', view: 'timer' }` |
 | host → Easy Lines | `{ source: 'hunterspace', type: 'settings', settings: { theme, accent, panelOpacity, panelBlur, radius, sideBySide } }` |
 | host → Easy Lines | `{ source: 'hunterspace', type: 'result', id, ok, message? }` |
+| host → Easy Lines | `{ source: 'hunterspace', type: 'viewport', top, height }` (iframe position, to keep results in view) |
 
-When a result row is clicked, Easy Lines sends `set-timer` with two phases: **the seed time in ms** and
-**the frames to wait on the Continue screen**.
+When a result row is clicked, Easy Lines sends `set-timer` with two phases (**the seed time in ms** and
+**the frames to wait on the Continue screen**) plus the full, already-translated record of that seed (`target`).
 
 ## License / Licencia
 

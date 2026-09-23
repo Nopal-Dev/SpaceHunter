@@ -57,8 +57,14 @@ if (embedded) {
   // (100vh aquí sería el propio iframe, que crece con el contenido: crecería sin fin).
   document.documentElement.style.setProperty('--view-h', `${screen.availHeight}px`);
 
-  const reportHeight = () => send('resize', { height: document.body.offsetHeight });
+  const reportHeight = () => {
+    let height = document.body.offsetHeight;
+    const panel = document.querySelector('.ss.open .ss-panel');
+    if (panel) height = Math.max(height, Math.ceil(panel.getBoundingClientRect().bottom + scrollY + 16));
+    send('resize', { height });
+  };
   new ResizeObserver(reportHeight).observe(document.body);
+  window.addEventListener('easylines:layout', reportHeight);
 
   const keepResultsInView = () => {
     const card = document.querySelector('.tl-results');

@@ -4,6 +4,9 @@ import { proxy } from './vendor/comlink.mjs';
 import { h, numberField, checkboxField } from './dom.js';
 import { t } from './i18n.js';
 import { embedded, request, send } from './host.js';
+import { searchSelect } from './searchSelect.js';
+
+let nextLabelId = 1;
 import {
   getEngine,
   getResources,
@@ -142,22 +145,27 @@ function dynSelect({ label, get, set, visible, tooltip, numeric = true }) {
   const select = h('select', {
     onchange: () => set(numeric ? Number(select.value) : select.value),
   });
+  const labelId = `tl-label-${nextLabelId++}`;
+  const picker = searchSelect(select, { labelId });
   const el = h(
-    'label',
+    'div',
     { class: 'field', title: tooltip },
-    h('span', { class: 'field-label' }, label),
-    select,
+    h('span', { class: 'field-label', id: labelId }, label),
+    picker.el,
   );
   return {
     el,
     input: select,
     setOptions(options) {
       select.replaceChildren(...options.map(([value, text]) => h('option', { value: String(value) }, text)));
+      picker.sync();
     },
     refresh(disabled = false) {
       select.value = String(get());
       select.disabled = disabled;
       el.hidden = visible ? !visible() : false;
+      if (el.hidden) picker.close();
+      picker.sync();
     },
   };
 }
@@ -586,7 +594,8 @@ export function createCalibration(root) {
     ].map(([value, key]) => h('option', { value }, t(key))),
   );
   sortSelect.value = state.sort in SORTERS ? state.sort : 'none';
-  const sortField = h('label', { class: 'tl-sort' }, h('span', {}, t('tl.sort')), sortSelect);
+  const sortPicker = searchSelect(sortSelect, { labelId: 'tl-sort-label' });
+  const sortField = h('div', { class: 'tl-sort' }, h('span', { id: 'tl-sort-label' }, t('tl.sort')), sortPicker.el);
   const resultsCard = h(
     'section',
     { class: 'card tl-results' },
@@ -951,6 +960,10 @@ export function createCalibration(root) {
       isTeachyTV: isTeachyTV(),
       isSwitch: isSwitch(),
       overworldFrames: overworldFrames(),
+      gameLabel: GAME_OPTIONS.find(([id]) => id === state.game)?.[1] ?? state.game,
+      consoleLabel: consoleField.input.selectedOptions[0]?.textContent ?? gameConsole(),
+      methodLabel: METHODS[state.method],
+      staticPokemonLabel: isStatic() ? staticPokemonField.input.selectedOptions[0]?.textContent ?? '' : '',
     };
     rows = [];
     selectedRow = null;
@@ -1108,6 +1121,33 @@ export function createCalibration(root) {
   }
 
   /** Configura el timer Custom: fase 1 = ms de la seed, fase 2 = frames en la pantalla Continue. */
+  /** Registro completo de una fila, con etiquetas ya traducidas, para la tarjeta "Seed objetivo". */
+  function describeRow(row, seedMS, s) {
+    const targetMS = frameToMS(s.target.seedTime / 16, s.gameConsole);
+    const diff = seedMS - targetMS;
+    const field = (key, label, value, extra = {}) => ({ key, label, value: String(value), ...extra });
+    return {
+      subtitle: [s.gameLabel, s.consoleLabel, s.isStatic ? s.staticPokemonLabel : null].filter(Boolean).join(' · '),
+      fields: [
+        field('seed', t('col.seed'), `${hexSeed(row.initialSeed, 16)} | ${seedMS} ms (${diff >= 0 ? '+' : ''}${diff} ms)`, { mono: true, wide: true }),
+        field('advances', t('col.advances'), row.advances),
+        field('continue', t('col.continue'), continueFrames(row, s)),
+        field('method', t('col.method'), s.isMultiMethod ? METHODS[row.method] : s.methodLabel),
+        s.isTeachyTV && field('aPress', t('col.aPress'), row.advances - row.ttvAdvances * 313 + row.ttvAdvances),
+        s.isTeachyTV && field('ttv', t('col.ttv'), row.ttvAdvances),
+        !s.isStatic && field('slot', t('col.slot'), `${row.encounterSlot}: ${res.getName(row.species, row.form)}`),
+        !s.isStatic && field('level', t('col.level'), row.level),
+        field('pid', t('col.pid'), hexSeed(row.pid, 32), { mono: true }),
+        field('shiny', t('col.shiny'), SHININESS[row.shiny], { highlight: row.shiny > 0 }),
+        field('nature', t('col.nature'), res.NATURES[row.nature]),
+        field('ability', t('col.ability'), `${row.ability}: ${res.ABILITIES[row.abilityIndex - 1]}`),
+        field('ivs', t('col.ivs'), row.ivs.join('/'), { mono: true }),
+        field('hiddenPower', t('col.hp'), `${res.TYPES[row.hiddenPower]} ${row.hiddenPowerStrength}`),
+        field('gender', t('col.gender'), GENDERS[row.gender]),
+      ].filter(Boolean),
+    };
+  }
+
   async function sendToTimer(row, seedMS, tr) {
     const s = snapshot;
     const frames = continueFrames(row, s);
@@ -1117,6 +1157,7 @@ export function createCalibration(root) {
         { unit: 'Advances', target: Math.max(0, frames) },
       ],
       console: TIMER_CONSOLE[s.gameConsole] ?? 'GBA',
+      target: describeRow(row, seedMS, s),
     };
     const result = await request('set-timer', detail);
 
