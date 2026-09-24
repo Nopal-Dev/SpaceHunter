@@ -1,0 +1,5 @@
+# Apache no trae mapeado el tipo MIME de .mjs por defecto, y los navegadores exigen uno
+# válido de JavaScript para cargar módulos ES (si no, "MIME type of ''").
+<IfModule mod_mime.c>
+  AddType text/javascript .mjs
+</IfModule>
