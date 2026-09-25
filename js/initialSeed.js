@@ -6,7 +6,18 @@
 import { proxy } from './vendor/comlink.mjs';
 import { h, numberField, checkboxField } from './dom.js';
 import { t } from './i18n.js';
-import { dynSelect, section, copyable, GAME_OPTIONS, consoleOptions, UINT_MAX } from './shared.js';
+import {
+  dynSelect,
+  section,
+  copyable,
+  GAME_OPTIONS,
+  consoleOptions,
+  SOUND_OPTIONS,
+  BUTTON_MODE_OPTIONS,
+  BUTTON_OPTIONS,
+  HELD_BUTTON_OPTIONS,
+  UINT_MAX,
+} from './shared.js';
 import { getEngine, fetchSeedData, frameToMS, hexSeed, fixGameConsole } from './engine.js';
 
 const STORAGE_KEY = 'easy-lines-initial-seed';
@@ -47,26 +58,13 @@ function formatDuration(ms) {
   return `${pad(hours)}:${pad(minutes)}:${pad(seconds)}.${pad(millis, 3)}`;
 }
 
-/** "Mono | L=A | Botón de seed: A | Botón extra: Startup Select" a partir de la clave de ajustes FRLG. */
+/** "Mono | L=A | Botón de semilla: A | Botón extra: Select al arrancar" a partir de la clave de ajustes FRLG. */
 function describeSettings(settings) {
   if (!settings) return '';
   const [sound, buttonMode, activeButton, heldModifier, heldButton] = settings.split('_');
-  const term = {
-    stereo: 'Stereo',
-    mono: 'Mono',
-    start: 'Start',
-    select: 'Select',
-    a: 'A',
-    l: 'L',
-    r: 'R',
-    startup: 'Startup',
-    blackout: 'Blackout',
-    al: 'A+L',
-    none: t('none'),
-  };
-  const modes = { a: 'L=A', h: 'Help', r: 'LR' };
-  const extra = [term[heldModifier], term[heldButton]].filter(Boolean).join(' ');
-  return `${term[sound] ?? sound} | ${modes[buttonMode] ?? buttonMode} | ${t('tl.button')}: ${term[activeButton] ?? activeButton} | ${t('tl.heldButton')}: ${extra}`;
+  const label = (options, value) => options.find(([v]) => v === value)?.[1] ?? value;
+  const held = heldModifier + (heldButton ? `_${heldButton}` : '');
+  return `${label(SOUND_OPTIONS, sound)} | ${label(BUTTON_MODE_OPTIONS, buttonMode)} | ${t('tl.button')}: ${label(BUTTON_OPTIONS, activeButton)} | ${t('tl.heldButton')}: ${label(HELD_BUTTON_OPTIONS, held)}`;
 }
 
 /**

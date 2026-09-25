@@ -178,12 +178,12 @@ export function getResources() {
 }
 
 export const METHODS = {
-  [STATIC_1]: 'Static 1',
-  [STATIC_2]: 'Static 2',
-  [STATIC_4]: 'Static 4',
-  [WILD_1]: 'Wild 1',
-  [WILD_2]: 'Wild 2',
-  [WILD_4]: 'Wild 4',
+  [STATIC_1]: t('method.static', { n: 1 }),
+  [STATIC_2]: t('method.static', { n: 2 }),
+  [STATIC_4]: t('method.static', { n: 4 }),
+  [WILD_1]: t('method.wild', { n: 1 }),
+  [WILD_2]: t('method.wild', { n: 2 }),
+  [WILD_4]: t('method.wild', { n: 4 }),
   [COMBINED_WILD_METHOD]: t('method.allWild'),
 };
 

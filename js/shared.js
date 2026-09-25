@@ -50,6 +50,31 @@ export const WILD_CATEGORIES = [
   [8, t('wild.superRod')],
 ];
 
+// Ajustes de FRLG con los que se consigue una semilla: sonido, modo de botones, botón y botón extra
+export const SOUND_OPTIONS = [
+  ['mono', t('opt.mono')],
+  ['stereo', t('opt.stereo')],
+];
+export const BUTTON_MODE_OPTIONS = [
+  ['a', 'L=A'],
+  ['h', t('opt.help')],
+  ['r', 'LR'],
+];
+export const BUTTON_OPTIONS = [
+  ['a', 'A'],
+  ['start', 'Start'],
+  ['l', 'L (L=A)'],
+];
+export const HELD_BUTTON_OPTIONS = [
+  ['none', t('none')],
+  ['startup_select', t('held.startup', { b: 'Select' })],
+  ['startup_a', t('held.startup', { b: 'A' })],
+  ['blackout_r', t('held.blackout', { b: 'R' })],
+  ['blackout_a', t('held.blackout', { b: 'A' })],
+  ['blackout_l', t('held.blackout', { b: 'L' })],
+  ['blackout_al', t('held.blackout', { b: 'A+L' })],
+];
+
 /** Consolas disponibles según el juego (Switch o el resto). */
 export function consoleOptions(isSwitch) {
   return isSwitch

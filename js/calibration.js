@@ -14,6 +14,10 @@ import {
   STATIC_CATEGORIES,
   WILD_CATEGORIES,
   consoleOptions,
+  SOUND_OPTIONS,
+  BUTTON_MODE_OPTIONS,
+  BUTTON_OPTIONS,
+  HELD_BUTTON_OPTIONS,
   MAX_ROWS,
   UINT_MAX,
   IV_NAMES,
@@ -175,10 +179,7 @@ export function createCalibration(root) {
     get: () => state.sound,
     set: (v) => set({ sound: v }, loadSeedList),
   });
-  soundField.setOptions([
-    ['mono', 'Mono'],
-    ['stereo', 'Stereo'],
-  ]);
+  soundField.setOptions(SOUND_OPTIONS);
 
   const buttonModeField = dynSelect({
     label: t('tl.buttonMode'),
@@ -187,11 +188,7 @@ export function createCalibration(root) {
     get: () => state.buttonMode,
     set: (v) => set({ buttonMode: v }, loadSeedList),
   });
-  buttonModeField.setOptions([
-    ['a', 'L=A'],
-    ['h', 'Help'],
-    ['r', 'LR'],
-  ]);
+  buttonModeField.setOptions(BUTTON_MODE_OPTIONS);
 
   const buttonField = dynSelect({
     label: t('tl.button'),
@@ -200,11 +197,7 @@ export function createCalibration(root) {
     get: () => state.button,
     set: (v) => set({ button: v }, loadSeedList),
   });
-  buttonField.setOptions([
-    ['a', 'A'],
-    ['start', 'Start'],
-    ['l', 'L (L=A)'],
-  ]);
+  buttonField.setOptions(BUTTON_OPTIONS);
 
   const heldButtonField = dynSelect({
     label: t('tl.heldButton'),
@@ -213,15 +206,7 @@ export function createCalibration(root) {
     get: () => state.heldButton,
     set: (v) => set({ heldButton: v }, loadSeedList),
   });
-  heldButtonField.setOptions([
-    ['none', 'None'],
-    ['startup_select', 'Startup Select'],
-    ['startup_a', 'Startup A'],
-    ['blackout_r', 'Blackout R'],
-    ['blackout_a', 'Blackout A'],
-    ['blackout_l', 'Blackout L'],
-    ['blackout_al', 'Blackout A+L'],
-  ]);
+  heldButtonField.setOptions(HELD_BUTTON_OPTIONS);
 
   const consoleField = dynSelect({
     label: t('tl.console'),
