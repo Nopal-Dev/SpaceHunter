@@ -159,7 +159,6 @@ const DICT = {
     'Timer configurado (Custom): fase 1 = {ms} ms · fase 2 = {f} frames en Continue',
     'Timer set (Custom): phase 1 = {ms} ms · phase 2 = {f} frames on Continue',
   ],
-  'tl.goTimer': ['Ir al timer →', 'Go to timer →'],
   'tl.sort': ['Ordenar', 'Sort'],
   'tl.sort.none': ['Orden original', 'Original order'],
   'tl.sort.seedAsc': ['Seed: menor a mayor', 'Seed: low to high'],

@@ -507,7 +507,6 @@ export function createCalibration(root) {
   const resultsBody = h('tbody');
   const resultsCount = h('span', { class: 'muted' });
   const resultsEmpty = h('p', { class: 'empty' }, t('tl.resultsIdle'));
-  const timerNotice = h('div', { class: 'tl-notice', hidden: true });
   // Aviso destacado: dentro de HunterSpace, que cada fila se puede usar para configurar el timer
   const resultsHint = h(
     'p',
@@ -549,7 +548,6 @@ export function createCalibration(root) {
       resultsCount,
     ),
     resultsHint,
-    timerNotice,
     h('div', { class: 'tl-table-wrap' }, h('table', { class: 'tl-table' }, resultsHead, resultsBody)),
     resultsEmpty,
   );
@@ -899,7 +897,6 @@ export function createCalibration(root) {
     };
     rows = [];
     selectedRow = null;
-    timerNotice.hidden = true;
     renderResults();
     searching = true;
     refresh();
@@ -1115,24 +1112,16 @@ export function createCalibration(root) {
     };
     const result = await request('set-timer', detail);
 
-    timerNotice.hidden = false;
+    // El aviso lo muestra la página contenedora, con el mismo estilo que el resto de sus avisos
+    // (con el botón "Ir al timer" si se configuró)
     if (!result.ok) {
-      timerNotice.className = 'tl-notice error';
-      timerNotice.replaceChildren(result.message || t('tl.hostError'));
+      send('notice', { ok: false, text: result.message || t('tl.hostError') });
       return;
     }
     selectedRow = row;
     resultsBody.querySelector('.tl-selected')?.classList.remove('tl-selected');
     tr.classList.add('tl-selected');
-    timerNotice.className = 'tl-notice';
-    timerNotice.replaceChildren(
-      h(
-        'span',
-        {},
-        t('tl.timerSet', { ms: detail.phases[0].target, f: detail.phases[1].target }),
-      ),
-      h('button', { type: 'button', class: 'btn btn-primary btn-sm', onclick: () => send('navigate', { view: 'timer' }) }, t('tl.goTimer')),
-    );
+    send('notice', { ok: true, text: t('tl.timerSet', { ms: detail.phases[0].target, f: detail.phases[1].target }), action: 'timer' });
   }
 
   // ─── Inicio ───

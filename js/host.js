@@ -9,6 +9,7 @@
 //                                   target: { subtitle, fields: [{ key, label, value, mono?, wide?, highlight? }] }
 //                                     registro completo de la seed (etiquetas ya traducidas), para
 //                                     que la página contenedora lo muestre como "Seed objetivo"
+//                                { source: 'easy-lines', type: 'notice', ok, text, action? }  (action: 'timer')
 //                                { source: 'easy-lines', type: 'navigate', view: 'timer' }
 //                                { source: 'easy-lines', type: 'resize', height }
 //                                   alto del contenido, para que el iframe crezca y la página

@@ -782,30 +782,8 @@ body.tl-side-by-side .tl-table-wrap {
   }
 }
 
-.tl-notice {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-wrap: wrap;
-  gap: 10px;
-  margin-bottom: 12px;
-  padding: 10px 12px;
-  border-radius: 10px;
-  font-size: 13.5px;
-  background: rgba(34, 197, 94, 0.14);
-  border: 1px solid rgba(34, 197, 94, 0.35);
-}
 
-.tl-notice.error {
-  background: rgba(239, 68, 68, 0.14);
-  border-color: rgba(239, 68, 68, 0.35);
-}
 
-.tl-notice .btn {
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-}
 
 /* Selector de orden de resultados */
 .tl-results-head .tl-sort {
