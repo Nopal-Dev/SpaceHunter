@@ -1,6 +1,6 @@
 # Easy Lines
 
-Calibration tool for **Gen 3 Pokémon RNG** (Ruby/Sapphire/Emerald painting seeds and
+Calibration, seed search and initial seed tools for **Gen 3 Pokémon RNG** (Ruby/Sapphire/Emerald painting seeds and
 FireRed/LeafGreen initial seeds), in English and Spanish.
 
 It is the Easy Lines section of **HunterSpace**, published as a standalone program. It is powered by the
@@ -12,6 +12,7 @@ HunterSpace, publicada como programa independiente. Usa el motor de Ten Lines / 
 
 ## Features / Funciones
 
+- The three Ten Lines tools: **Calibration**, **Searcher** (find RNG seeds that give a Pokémon with the chosen filters) and **Initial Seed** (closest initial seeds, advances and total time for a target seed). Results link from one tool to the next, as in Ten Lines.
 - Every Ten Lines calibration option: 16 game versions (incl. Switch and mGBA), GBA / GBP / NDS / 3DS / Switch 1–2,
   target seed ± range, advances, offset, TeachyTV mode, TID/SID, static and wild encounters, shiny / nature / gender
   filters and IV calculator.

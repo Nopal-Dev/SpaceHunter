@@ -26,6 +26,45 @@ const DICT = {
   none: ['Ninguno', 'None'],
   soon: ['Próximamente', 'Coming soon'],
   'tl.tools': ['Herramientas de Easy Lines', 'Easy Lines tools'],
+  'tab.calibration': ['Calibration', 'Calibration'],
+  'tab.searcher': ['Searcher', 'Searcher'],
+  'tab.initialSeed': ['Initial Seed', 'Initial Seed'],
+  // Searcher
+  'sr.intro': [
+    'Busca las seeds del RNG que dan un Pokémon con estos filtros. Abre una en Initial Seed para ver cómo llegar a ella.',
+    'Finds the RNG seeds that give a Pokémon with these filters. Open one in Initial Seed to see how to reach it.',
+  ],
+  'sr.ivHint': [
+    'Acota los IVs para que la búsqueda sea rápida: con todos en 0–31 puede tardar mucho.',
+    'Narrow the IVs to keep the search fast: with all of them at 0–31 it can take a long time.',
+  ],
+  'sr.searching': ['Buscando… (puede tardar según los filtros)', 'Searching… (it may take a while depending on the filters)'],
+  'sr.hint': ['Pulsa "Initial Seed" en una fila para buscar cómo llegar a esa seed.', 'Press "Initial Seed" on a row to find how to reach that seed.'],
+  'sr.openInitial': ['Abrir esta seed en Initial Seed', 'Open this seed in Initial Seed'],
+  // Initial Seed
+  'is.intro': [
+    'Dada una seed objetivo (por ejemplo, del Searcher), lista las seeds iniciales más cercanas, los avances necesarios y el tiempo total.',
+    'Given a target seed (for example, from the Searcher), lists the closest initial seeds, the advances needed and the total time.',
+  ],
+  'is.target': ['Seed objetivo (hex)', 'Target seed (hex)'],
+  'is.target.tip': ['Seed del RNG de 32 bits, en hexadecimal', '32-bit RNG seed, in hexadecimal'],
+  'is.count': ['Número de resultados', 'Result count'],
+  'is.ttvOut': ['Avances mínimos fuera de TeachyTV', 'Minimum advances outside of TeachyTV'],
+  'is.ttvOut.tip': [
+    'Avances que haces fuera de TeachyTV (en el overworld) antes de llegar a la seed',
+    'Advances you do outside of TeachyTV (in the overworld) before reaching the seed',
+  ],
+  'is.seedDec': ['Seed (dec)', 'Seed (dec)'],
+  'is.seedHex': ['Seed (hex)', 'Seed (hex)'],
+  'is.totalFrames': ['Frames totales (estimados)', 'Estimated total frames'],
+  'is.totalTime': ['Tiempo total (estimado)', 'Estimated total time'],
+  'is.seedTime': ['Tiempo de la seed', 'Seed time'],
+  'is.settings': ['Ajustes', 'Settings'],
+  'is.hint': [
+    'Pulsa "Calibration" en una fila para abrirla en Calibration con su seed, su rango de avances y sus ajustes.',
+    'Press "Calibration" on a row to open it in Calibration with its seed, advances range and settings.',
+  ],
+  'is.openCalibration': ['Abrir en Calibration', 'Open in Calibration'],
   'tl.credits': [
     'Motor y datos de <a href="https://github.com/Lincoln-LM/ten-lines" target="_blank" rel="noopener noreferrer">Ten Lines</a> de Lincoln-LM, basado en <a href="https://github.com/Admiral-Fish/PokeFinder" target="_blank" rel="noopener noreferrer">PokeFinder</a>. Easy Lines es software libre (GPL-3.0): <a href="https://github.com/Nopal-Dev/SpaceHunter" target="_blank" rel="noopener noreferrer">código fuente</a>.',
     'Engine and data from <a href="https://github.com/Lincoln-LM/ten-lines" target="_blank" rel="noopener noreferrer">Ten Lines</a> by Lincoln-LM, based on <a href="https://github.com/Admiral-Fish/PokeFinder" target="_blank" rel="noopener noreferrer">PokeFinder</a>. Easy Lines is free software (GPL-3.0): <a href="https://github.com/Nopal-Dev/SpaceHunter" target="_blank" rel="noopener noreferrer">source code</a>.',

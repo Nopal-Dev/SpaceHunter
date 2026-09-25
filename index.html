@@ -19,11 +19,13 @@
         <h1 data-i18n="view.easyLines">Easy Lines</h1>
       </header>
       <nav class="tabs tl-tabs" aria-label="Easy Lines tools" data-i18n-aria="tl.tools">
-        <button type="button" class="tab active" aria-current="page">Calibration</button>
-        <button type="button" class="tab" disabled title="Coming soon" data-i18n-title="soon">Searcher</button>
-        <button type="button" class="tab" disabled title="Coming soon" data-i18n-title="soon">Initial Seed</button>
+        <button type="button" class="tab active" data-tab="calibration" aria-current="page">Calibration</button>
+        <button type="button" class="tab" data-tab="searcher">Searcher</button>
+        <button type="button" class="tab" data-tab="initial-seed">Initial Seed</button>
       </nav>
-      <div id="tl-calibration" class="tl-calibration"></div>
+      <div id="tl-calibration" class="tl-panel" data-panel="calibration"></div>
+      <div id="tl-searcher" class="tl-panel" data-panel="searcher" hidden></div>
+      <div id="tl-initial-seed" class="tl-panel" data-panel="initial-seed" hidden></div>
       <p class="tl-credits" data-i18n-html="tl.credits"></p>
     </main>
     <script type="module" src="js/main.js"></script>

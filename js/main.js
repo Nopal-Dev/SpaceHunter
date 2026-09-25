@@ -4,6 +4,8 @@
 import { translatePage } from './i18n.js';
 import { embedded, send, onSettings, onViewport } from './host.js';
 import { createCalibration } from './calibration.js';
+import { createSearcher } from './searcher.js';
+import { createInitialSeed } from './initialSeed.js';
 
 const DEFAULT_APPEARANCE = {
   theme: 'system', // 'dark' | 'light' | 'system'
@@ -44,7 +46,63 @@ darkQuery.addEventListener('change', () => applyAppearance());
 document.body.classList.toggle('embedded', embedded);
 applyAppearance();
 translatePage();
-createCalibration(document.getElementById('tl-calibration'));
+// ─── Pestañas: Calibration, Searcher e Initial Seed ───
+// Como en Ten Lines: un resultado del Searcher se abre en Initial Seed, y uno de Initial Seed en
+// Calibration. Searcher e Initial Seed se crean la primera vez que se abren.
+const TAB_KEY = 'easy-lines-tab';
+const tabButtons = [...document.querySelectorAll('.tl-tabs .tab[data-tab]')];
+const panels = Object.fromEntries([...document.querySelectorAll('.tl-panel')].map((p) => [p.dataset.panel, p]));
+const tools = {};
+
+function tool(name) {
+  if (!tools[name]) {
+    if (name === 'calibration') tools[name] = createCalibration(panels.calibration);
+    if (name === 'searcher') {
+      tools[name] = createSearcher(panels.searcher, {
+        onOpenInitialSeed: (hex) => {
+          showTab('initial-seed');
+          tool('initial-seed').setTarget(hex);
+        },
+      });
+    }
+    if (name === 'initial-seed') {
+      tools[name] = createInitialSeed(panels['initial-seed'], {
+        onOpenCalibration: (patch) => {
+          showTab('calibration');
+          tool('calibration').open(patch);
+        },
+      });
+    }
+  }
+  return tools[name];
+}
+
+function showTab(name) {
+  if (!panels[name]) name = 'calibration';
+  tool(name);
+  for (const button of tabButtons) {
+    const active = button.dataset.tab === name;
+    button.classList.toggle('active', active);
+    if (active) button.setAttribute('aria-current', 'page');
+    else button.removeAttribute('aria-current');
+  }
+  for (const [key, panel] of Object.entries(panels)) panel.hidden = key !== name;
+  try {
+    localStorage.setItem(TAB_KEY, name);
+  } catch {
+    // ignorar
+  }
+  window.dispatchEvent(new Event('easylines:layout'));
+}
+
+for (const button of tabButtons) button.addEventListener('click', () => showTab(button.dataset.tab));
+let initialTab = 'calibration';
+try {
+  initialTab = localStorage.getItem(TAB_KEY) ?? 'calibration';
+} catch {
+  // ignorar
+}
+showTab(initialTab);
 
 // ─── Dentro de una página contenedora (iframe) ───
 // Easy Lines no tiene scroll propio: avisa de su alto para que el iframe crezca y la página
@@ -67,7 +125,7 @@ if (embedded) {
   window.addEventListener('easylines:layout', reportHeight);
 
   const keepResultsInView = () => {
-    const card = document.querySelector('.tl-results');
+    const card = document.querySelector('.tl-panel:not([hidden]) .tl-results');
     if (!card) return;
     card.style.transform = '';
     const sideBySide = document.body.classList.contains('tl-side-by-side') && innerWidth > 1100;
