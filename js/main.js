@@ -137,8 +137,29 @@ if (embedded) {
     if (shift > 0) card.style.transform = `translateY(${shift}px)`;
   };
 
+  // Botón Buscar siempre a la vista en pantallas estrechas (como position: sticky, que no funciona
+  // aquí porque el scroll lo hace la página contenedora)
+  const STICKY_BOTTOM = 12;
+  const keepSubmitInView = () => {
+    const button = document.querySelector('.tl-panel:not([hidden]) .tl-submit');
+    if (!button) return;
+    button.style.transform = '';
+    button.classList.remove('floating');
+    if (innerWidth > 600) return;
+    const form = button.closest('form');
+    const visibleBottom = -viewport.top + viewport.height - (viewport.bottom ?? 0) - STICKY_BOTTOM;
+    const rect = button.getBoundingClientRect();
+    const buttonBottom = rect.bottom + scrollY;
+    const formTop = form.getBoundingClientRect().top + scrollY;
+    if (buttonBottom <= visibleBottom || visibleBottom < formTop + rect.height * 2) return;
+    button.style.transform = `translateY(${Math.round(visibleBottom - buttonBottom)}px)`;
+    button.classList.add('floating');
+  };
+  window.addEventListener('easylines:layout', keepSubmitInView);
+
   onViewport((v) => {
     viewport = v;
+    keepSubmitInView();
     // Alto de la ventana de la página contenedora (para las listas con scroll propio)
     document.documentElement.style.setProperty('--view-h', `${v.height}px`);
     keepResultsInView();

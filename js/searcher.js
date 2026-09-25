@@ -5,7 +5,7 @@
 import { proxy } from './vendor/comlink.mjs';
 import { h, numberField } from './dom.js';
 import { t } from './i18n.js';
-import { dynSelect, section, GAME_OPTIONS, STATIC_CATEGORIES, WILD_CATEGORIES, MAX_ROWS, IV_NAMES } from './shared.js';
+import { dynSelect, section, revealResults, GAME_OPTIONS, STATIC_CATEGORIES, WILD_CATEGORIES, MAX_ROWS, IV_NAMES } from './shared.js';
 import {
   getEngine,
   getResources,
@@ -357,6 +357,7 @@ export function createSearcher(root, { onOpenInitialSeed }) {
     searching = true;
     status.textContent = t('sr.searching');
     refresh();
+    revealResults(resultsCard);
 
     const engine = await getEngine();
     const onResults = proxy((results) => {

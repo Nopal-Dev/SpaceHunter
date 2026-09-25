@@ -14,6 +14,7 @@ import {
   STATIC_CATEGORIES,
   WILD_CATEGORIES,
   consoleOptions,
+  revealResults,
   SOUND_OPTIONS,
   BUTTON_MODE_OPTIONS,
   BUTTON_OPTIONS,
@@ -885,6 +886,7 @@ export function createCalibration(root) {
     renderResults();
     searching = true;
     refresh();
+    revealResults(resultsCard);
 
     const engine = await getEngine();
     const onResults = proxy((results) => {

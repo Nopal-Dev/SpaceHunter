@@ -418,11 +418,47 @@ select option:checked {
   width: 100%;
   padding: 0;
   margin-bottom: 10px;
+}
+
+/* Título del bloque: botón para plegarlo */
+.tl-section-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 2px 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
   font-size: 12px;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--accent);
+  text-align: left;
+}
+
+.tl-section-toggle .chevron {
+  width: 7px;
+  height: 7px;
+  margin: 0 4px 0 12px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(-135deg) translate(-2px, -2px);
+  transition: transform 0.2s;
+}
+
+.tl-section.collapsed .chevron {
+  transform: rotate(45deg);
+}
+
+.tl-section.collapsed legend {
+  margin-bottom: 0;
+}
+
+.tl-section.collapsed .field-grid {
+  display: none;
 }
 
 .tl-section .field-grid {
@@ -1110,4 +1146,21 @@ body.embedded.tl-side-by-side .tl-results {
 /* ─── Searcher e Initial Seed ─── */
 .tl-intro {
   margin: 12px 0 0;
+}
+
+/* ─── Botón Buscar a la vista en pantallas estrechas ─── */
+@media (max-width: 600px) {
+  /* Abierto directamente: sticky. Dentro de una página contenedora lo mueve js/main.js (.floating) */
+  body:not(.embedded) .tl-submit {
+    position: sticky;
+    bottom: 12px;
+    z-index: 5;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
+
+  .tl-submit.floating {
+    position: relative;
+    z-index: 5;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
 }

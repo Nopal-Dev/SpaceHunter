@@ -3,6 +3,7 @@
 import { h } from './dom.js';
 import { t } from './i18n.js';
 import { searchSelect } from './searchSelect.js';
+import { embedded, send } from './host.js';
 
 let nextLabelId = 1;
 
@@ -199,6 +200,69 @@ export function pointerIcon() {
   return svg;
 }
 
+// Bloques plegables del formulario: el título es un botón y se recuerda cuáles están plegados
+const COLLAPSED_KEY = 'easy-lines-collapsed';
+let collapsedSections = {};
+try {
+  collapsedSections = JSON.parse(localStorage.getItem(COLLAPSED_KEY) ?? '{}') ?? {};
+} catch {
+  collapsedSections = {};
+}
+
+/**
+ * Bloque del formulario con título. `key` identifica el bloque para recordar si está plegado
+ * (por defecto, el propio título).
+ */
 export function section(title, ...children) {
-  return h('fieldset', { class: 'tl-section' }, h('legend', {}, title), h('div', { class: 'field-grid' }, ...children));
+  const key = title;
+  const grid = h('div', { class: 'field-grid' }, ...children);
+  const toggle = h(
+    'button',
+    {
+      type: 'button',
+      class: 'tl-section-toggle',
+      onclick: () => {
+        const collapsed = !fieldset.classList.contains('collapsed');
+        fieldset.classList.toggle('collapsed', collapsed);
+        toggle.setAttribute('aria-expanded', String(!collapsed));
+        if (collapsed) collapsedSections[key] = true;
+        else delete collapsedSections[key];
+        try {
+          localStorage.setItem(COLLAPSED_KEY, JSON.stringify(collapsedSections));
+        } catch {
+          // ignorar
+        }
+        window.dispatchEvent(new Event('easylines:layout'));
+      },
+    },
+    h('span', {}, title),
+    h('span', { class: 'chevron', 'aria-hidden': 'true' }),
+  );
+  const fieldset = h('fieldset', { class: `tl-section${collapsedSections[key] ? ' collapsed' : ''}` }, h('legend', {}, toggle), grid);
+  toggle.setAttribute('aria-expanded', String(!collapsedSections[key]));
+  return fieldset;
+}
+
+/** ¿Formulario y resultados están uno debajo del otro? (en ese caso conviene bajar a los resultados) */
+export const isStacked = () => !(document.body.classList.contains('tl-side-by-side') && innerWidth > 1100);
+
+/**
+ * Al buscar, con el formulario y los resultados apilados, lleva la vista a los resultados. Dentro de
+ * una página contenedora se lo pide a ella (Easy Lines no tiene scroll propio).
+ */
+export function revealResults(card) {
+  if (!isStacked()) return;
+  if (embedded) {
+    send('scroll-to', { top: Math.round(card.getBoundingClientRect().top + scrollY) });
+    return;
+  }
+  // Abierto directamente: si la página aún es corta (sin resultados), se repite al crecer unos segundos
+  card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  const until = Date.now() + 4000;
+  const observer = new ResizeObserver(() => {
+    if (Date.now() > until) observer.disconnect();
+    else if (Math.abs(card.getBoundingClientRect().top) > 2) card.scrollIntoView({ block: 'start' });
+  });
+  observer.observe(document.body);
+  setTimeout(() => observer.disconnect(), 4000);
 }

@@ -12,6 +12,7 @@ import {
   copyable,
   GAME_OPTIONS,
   consoleOptions,
+  revealResults,
   SOUND_OPTIONS,
   BUTTON_MODE_OPTIONS,
   BUTTON_OPTIONS,
@@ -198,6 +199,7 @@ export function createInitialSeed(root, { onOpenCalibration }) {
     status.textContent = t('tl.loadingEngine');
     renderResults();
     refresh();
+    revealResults(resultsCard);
     const done = proxy((results) => {
       if (id !== searchId) return;
       rows = Array.from(results);

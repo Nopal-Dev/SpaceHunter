@@ -11,15 +11,18 @@
 //                                     que la página contenedora lo muestre como "Seed objetivo"
 //                                { source: 'easy-lines', type: 'notice', ok, text, action? }  (action: 'timer')
 //                                { source: 'easy-lines', type: 'navigate', view: 'timer' }
+//                                { source: 'easy-lines', type: 'scroll-to', top }
+//                                   llevar la vista a esa altura del contenido (p. ej. a los resultados)
 //                                { source: 'easy-lines', type: 'resize', height }
 //                                   alto del contenido, para que el iframe crezca y la página
 //                                   contenedora haga el scroll (Easy Lines no tiene scroll propio)
 //
 //   página → Easy Lines          { source: 'hunterspace', type: 'settings', settings: {...} }
 //                                { source: 'hunterspace', type: 'result', id, ok, message }
-//                                { source: 'hunterspace', type: 'viewport', top, height }
-//                                   posición del iframe respecto a la ventana y alto de la ventana
-//                                   (para mantener a la vista el panel de resultados)
+//                                { source: 'hunterspace', type: 'viewport', top, height, bottom }
+//                                   posición del iframe respecto a la ventana, alto de la ventana y lo
+//                                   que tapa abajo la página (p. ej. su barra inferior en celular), para
+//                                   mantener a la vista el panel de resultados y el botón Buscar
 //
 // Sin página contenedora (abierto directamente), Easy Lines funciona solo y no envía nada.
 
@@ -39,7 +42,9 @@ window.addEventListener('message', (e) => {
   if (msg.type === 'settings') {
     settingsListeners.forEach((fn) => fn(msg.settings ?? {}));
   } else if (msg.type === 'viewport') {
-    viewportListeners.forEach((fn) => fn({ top: Number(msg.top) || 0, height: Number(msg.height) || innerHeight }));
+    viewportListeners.forEach((fn) =>
+      fn({ top: Number(msg.top) || 0, height: Number(msg.height) || innerHeight, bottom: Number(msg.bottom) || 0 }),
+    );
   } else if (msg.type === 'result' && pending.has(msg.id)) {
     pending.get(msg.id)(msg);
     pending.delete(msg.id);
