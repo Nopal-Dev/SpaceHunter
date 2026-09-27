@@ -18,6 +18,9 @@ import {
   BUTTON_OPTIONS,
   HELD_BUTTON_OPTIONS,
   UINT_MAX,
+  saveResults,
+  loadResults,
+  clearResults,
 } from './shared.js';
 import { getEngine, fetchSeedData, frameToMS, hexSeed, fixGameConsole } from './engine.js';
 
@@ -118,6 +121,7 @@ export function createInitialSeed(root, { onOpenCalibration }) {
     set: (v) => {
       rows = [];
       snapshot = null;
+      clearResults('initial-seed');
       renderResults();
       set({ game: v, gameConsole: fixGameConsole(v, state.gameConsole) });
     },
@@ -205,6 +209,8 @@ export function createInitialSeed(root, { onOpenCalibration }) {
       rows = Array.from(results);
       searching = false;
       status.textContent = '';
+      // Guardados para que no se pierdan al recargar la página
+      saveResults('initial-seed', snapshot, rows);
       renderResults();
       refresh();
     });
@@ -320,6 +326,12 @@ export function createInitialSeed(root, { onOpenCalibration }) {
     onOpenCalibration(patch);
   }
 
+  // Resultados de la última búsqueda (no necesitan nada más para pintarse)
+  const saved = loadResults('initial-seed');
+  if (saved) {
+    snapshot = saved.snapshot;
+    rows = saved.rows;
+  }
   refresh();
   renderResults();
 

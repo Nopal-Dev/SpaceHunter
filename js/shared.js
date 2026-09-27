@@ -8,6 +8,40 @@ import { embedded, send } from './host.js';
 let nextLabelId = 1;
 
 export const MAX_ROWS = 1000;
+
+// ─── Resultados guardados ───
+// Los resultados de la última búsqueda de cada pestaña se guardan en localStorage
+// (easy-lines-results-<pestaña>) junto con los parámetros con que se pintan, para no perderlos al
+// recargar la página. Se pueden regenerar, así que si no caben (localStorage lleno) no se guardan.
+const RESULTS_KEY = (tab) => `easy-lines-results-${tab}`;
+
+/** Guarda los resultados de una pestaña ('calibration', 'searcher' o 'initial-seed'). */
+export function saveResults(tab, snapshot, rows) {
+  try {
+    localStorage.setItem(RESULTS_KEY(tab), JSON.stringify({ version: 1, savedAt: Date.now(), snapshot, rows: rows.slice(0, MAX_ROWS + 1) }));
+  } catch {
+    // sin espacio o sin localStorage: se pierden al recargar, como antes
+    clearResults(tab);
+  }
+}
+
+/** Resultados guardados de una pestaña: { snapshot, rows, savedAt } o null. */
+export function loadResults(tab) {
+  try {
+    const data = JSON.parse(localStorage.getItem(RESULTS_KEY(tab)) ?? 'null');
+    return data?.version === 1 && data.snapshot && Array.isArray(data.rows) ? data : null;
+  } catch {
+    return null;
+  }
+}
+
+export function clearResults(tab) {
+  try {
+    localStorage.removeItem(RESULTS_KEY(tab));
+  } catch {
+    // ignorar
+  }
+}
 export const UINT_MAX = 4294967295;
 export const IV_NAMES = ['HP', 'Atk', 'Def', 'SpA', 'SpD', 'Spe'];
 

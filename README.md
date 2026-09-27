@@ -18,7 +18,7 @@ HunterSpace, publicada como programa independiente. Usa el motor de Ten Lines / 
   filters and IV calculator.
 - Sort results by seed or by Continue-screen frames.
 - Interface and Pokémon names in **English and Spanish** (`?lang=en|es`, otherwise the browser language).
-- Settings are remembered in the browser.
+- Settings, and the results of the last search in each tool, are remembered in the browser (results are not lost when the page reloads).
 - Inside HunterSpace, clicking a result sets up the timer automatically (see *Embedding* below).
 
 ## Running it / Cómo usarla

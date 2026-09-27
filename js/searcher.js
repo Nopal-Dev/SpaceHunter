@@ -5,7 +5,7 @@
 import { proxy } from './vendor/comlink.mjs';
 import { h, numberField } from './dom.js';
 import { t } from './i18n.js';
-import { dynSelect, section, revealResults, GAME_OPTIONS, STATIC_CATEGORIES, WILD_CATEGORIES, MAX_ROWS, IV_NAMES } from './shared.js';
+import { dynSelect, section, revealResults, GAME_OPTIONS, STATIC_CATEGORIES, WILD_CATEGORIES, MAX_ROWS, IV_NAMES, saveResults, loadResults } from './shared.js';
 import {
   getEngine,
   getResources,
@@ -371,6 +371,8 @@ export function createSearcher(root, { onOpenInitialSeed }) {
       if (!value) {
         status.textContent = '';
         scheduleRender();
+        // Guardados para que no se pierdan al recargar la página
+        saveResults('searcher', snapshot, rows);
       }
       refresh();
     });
@@ -502,6 +504,13 @@ export function createSearcher(root, { onOpenInitialSeed }) {
     fixStaticCategory();
     status.textContent = '';
     await Promise.all([loadStaticTemplates(), loadWildLocations()]);
+    // Resultados de la última búsqueda (si no se ha buscado otra cosa mientras cargaba)
+    const saved = loadResults('searcher');
+    if (saved && !snapshot && !searching) {
+      snapshot = saved.snapshot;
+      rows = saved.rows;
+      renderResults();
+    }
     refresh();
   }
 

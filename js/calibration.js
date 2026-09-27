@@ -22,6 +22,8 @@ import {
   MAX_ROWS,
   UINT_MAX,
   IV_NAMES,
+  saveResults,
+  loadResults,
 } from './shared.js';
 import { searchSelect } from './searchSelect.js';
 
@@ -897,7 +899,11 @@ export function createCalibration(root) {
     const onSearching = proxy((value) => {
       if (id !== searchId) return;
       searching = value;
-      if (!value) scheduleRender();
+      if (!value) {
+        scheduleRender();
+        // Guardados para que no se pierdan al recargar la página
+        saveResults('calibration', snapshot, rows);
+      }
       refresh();
     });
 
@@ -1126,6 +1132,13 @@ export function createCalibration(root) {
     status.textContent = '';
     await Promise.all([loadSeedList(), loadStaticTemplates(), loadWildLocations()]);
     if (state.ivCalculatorText) runIvCalculator();
+    // Resultados de la última búsqueda (si no se ha buscado otra cosa mientras cargaba)
+    const saved = loadResults('calibration');
+    if (saved && !snapshot && !searching) {
+      snapshot = saved.snapshot;
+      rows = saved.rows;
+      renderResults();
+    }
     refresh();
   }
 
